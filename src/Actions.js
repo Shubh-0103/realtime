@@ -7,6 +7,6 @@ CODE_CHANGE:'code-change',
 SYNC_CODE:'sync-code',
 LEAVE:'leave',
 };
-modeule.exports = ACTIONS;
+module.exports = ACTIONS;
 // module.export syntax is used for nodejs
 // this file is used on server as well as on clienet

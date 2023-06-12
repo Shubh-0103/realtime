@@ -3,8 +3,8 @@ height: 100vh;
 display : flex;
 align-items: center;
 justify-content: center;
-color: #fff
-
+color: #fff;
+height: 100vh;
 }
 .formWrapper{
   background: #282a36;
@@ -82,7 +82,7 @@ transition: all 0.3s ease-in-out;
 .mainWrap{
   display : grid;
   grid-template-columns: 230px 1fr;
-  height:100vh;
+  
 }
 .aside{
   background:#1c1e29 ;

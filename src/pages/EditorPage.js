@@ -1,24 +1,36 @@
 import React,{useState,useRef,useEffect} from 'react'
+import { toast } from 'react-hot-toast';
 import Client from '../components/Client'
 import  Editor  from '../components/Editor'
 import { initSocket } from '../socket';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate,useParams } from 'react-router-dom';
+import ACTIONS from '../Actions';
+
 
 export const EditorPage = () => {
   const socketRef = useRef(null);
   const location=useLocation();
+  const {roomId}=useParams();
+  
+  const reactNavigator = useNavigate();
   // useref is hook , due to this our component wont rerender
+
+
+
   useEffect(()=>{
     const init = async () => {
 socketRef.current = await initSocket();
-console.log(socketRef.current);
-socketRef.current.on('connect',()=>{
-  console.log('connected');
-})
-// socketRef.current.emit(ACTIONS.JOIN,{
-//   roomId,
-//   username:location.state?.username,
-// });
+socketRef.current.on('connect_error',(err) => handleErrors(err));
+socketRef.current.on('connect_failed',(err) => handleErrors(err));
+function handleErrors(e){
+  console.log('socket error',e);
+  toast.error('socket connection failed, try again later.');
+  reactNavigator('/');
+}
+socketRef.current.emit(ACTIONS.JOIN,{
+  roomId,
+  username:location.state?.username,
+});
 
     };
     init();
@@ -29,6 +41,12 @@ socketRef.current.on('connect',()=>{
     {socketId: 2,username: 'Jogn doe'},
     {socketId: 3,username: 'Jn doe'},
 ]);
+
+
+if (!location.state){
+  return <Navigate to="/" />
+}
+
   return (
 <div className='mainWrap'>
 <div className='aside'>
