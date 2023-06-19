@@ -5,17 +5,19 @@ import Editor from '../components/Editor'
 import { initSocket } from '../socket';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ACTIONS from '../Actions';
+import { act } from '@testing-library/react';
 
 
 export const EditorPage = () => {
   const socketRef = useRef(null);
+  const codeRef = useRef(null);
   const location = useLocation();
   const { roomId } = useParams();
-
+  
   const reactNavigator = useNavigate();
   // useref is hook , due to this our component wont rerender
 
-
+const [clients, setClients] = useState([]);
 
   useEffect(() => {
     const init = async () => {
@@ -31,16 +33,64 @@ export const EditorPage = () => {
         roomId,
         username: location.state?.username,
       });
+//Listening for joined events
+socketRef.current.on(
+  ACTIONS.JOINED,
+   ({clients,username,socketId}) => {
+if(username !== location.state?.username){
+  toast.success(`${username} joined the room.`);
+  console.log(`${username} joined`);
+}
+setClients(clients);
+socketRef.current.emit(ACTIONS.SYNC_CODE,{
+code : codeRef.current,
+socketId,
 
+});
+});
+
+
+//Listening for disconnected
+socketRef.current.on(ACTIONS.DISCONNECTED,({socketId,username})=>{
+
+toast.success(`${username} left the room. `);
+setClients((prev) => {
+return prev.filter(
+
+(client) => client.socketId!==socketId
+
+);
+
+});
+
+}
+)
     };
+
     init();
+return () => {
+  socketRef.current.disconnect();
+  socketRef.current.off(ACTIONS.JOINED);
+  socketRef.current.off(ACTIONS.DISCONNECTED);
+
+}
+
   }, []);
 
-  const [clients, setClients] = useState([
-    { socketId: 1, username: 'Rakesh K' },
-    { socketId: 2, username: 'Jogn doe' },
-    { socketId: 3, username: 'Jn doe' },
-  ]);
+  
+async function copyRoomId(){
+  try{
+    // global Api
+    await navigator.clipboard.writeText(roomId);
+    toast.success('Room ID has been copied to your clipboard');
+  }catch(err){
+toast.error('Could not copy the room Id');
+console.error(err);
+  }
+}
+function leaveRoom(){
+reactNavigator('/');
+}
 
 
   if (!location.state) {
@@ -63,11 +113,13 @@ export const EditorPage = () => {
             }
           </div>
         </div>
-        <button className='btn copyBtn'>Copy ROOM ID</button>
-        <button className='btn leaveBtn'>Leave</button>
+        <button className='btn copyBtn' onClick={copyRoomId}>Copy ROOM ID</button>
+        <button className='btn leaveBtn' onClick={leaveRoom}>Leave</button>
       </div>
       <div className='editorWrap'>
-        <Editor />
+        <Editor socketRef={socketRef} roomId={roomId} onCodeChange={(code)=>{
+          codeRef.current = code;
+        }}/>
       </div>
     </div>
   )
