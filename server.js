@@ -17,7 +17,8 @@ const userSocketMap = {};
 
 function getALLConnectedClients(roomId) {
     //map
-    Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
+    console.log("io",io.sockets.adapter.rooms, roomId)
+    return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
         (socketId) => {
             return {
                 socketId,
@@ -25,15 +26,16 @@ function getALLConnectedClients(roomId) {
             }
         });
 }
-io.on('connection', (socket) => {
+io?.on('connection', (socket) => {
     console.log('socket connected', socket.id);
 
-    socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
+    socket?.on(ACTIONS.JOIN, ({ roomId, username }) => {
         userSocketMap[socket.id] = username;
         socket.join(roomId);
 
         const clients = getALLConnectedClients(roomId);
-        clients.forEach( ({socketId}) => {
+        console.log(clients)
+        clients?.forEach( ({socketId}) => {
               io.to(socketId).emit(ACTIONS.JOINED ,{
                 clients,
                 username,
@@ -41,16 +43,16 @@ io.on('connection', (socket) => {
               });
         } )
     });
-socket.on(ACTIONS.CODE_CHANGE,({roomId,code})=>{
+socket?.on(ACTIONS.CODE_CHANGE,({roomId,code})=>{
     //emitting data froms server
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE,{code});
 });
-socket.on(ACTIONS.SYNC_CODE,({socketId,code})=>{
+socket?.on(ACTIONS.SYNC_CODE,({socketId,code})=>{
     //emitting data froms server
     io.to(socketId).emit(ACTIONS.CODE_CHANGE,{code});
 });
 
-    socket.on('disconnecting',() =>{
+    socket?.on('disconnecting',({roomId}) =>{
         //converting map to array
         const rooms = [...socket.rooms]
         rooms.forEach(()=>{
