@@ -28,7 +28,6 @@ export const Home = () => {
         })
     };
     const handleInputEnter = (e) => {
-        console.log('event', e.code);
         if (e.code === 'Enter') {
             joinRoom();
         }

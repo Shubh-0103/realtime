@@ -13,7 +13,6 @@ export const EditorPage = () => {
   const codeRef = useRef(null);
   const location = useLocation();
   const { roomId } = useParams();
-  console.log("room:",roomId)
   const reactNavigator = useNavigate();
   // useref is hook , due to this our component wont rerender
 
@@ -21,13 +20,10 @@ export const EditorPage = () => {
 
   useEffect(() => {
     const init = async () => {
-      console.log("hello")
       socketRef.current = await initSocket();
-      console.log(socketRef.current)
       socketRef.current?.on('connect_error', (err) => handleErrors(err));
       socketRef.current?.on('connect_failed', (err) => handleErrors(err));
       function handleErrors(e) {
-        console.log('socket error', e);
         toast.error('socket connection failed, try again later.');
         reactNavigator('/');
       }
@@ -39,10 +35,8 @@ export const EditorPage = () => {
       socketRef.current?.on(
         ACTIONS.JOINED,
         ({ clients, username, socketId }) => {
-          console.log(clients,username, socketId)
           if (username !== location.state?.username) {
             toast.success(`${username} joined the room.`);
-            console.log(`${username} joined`);
           }
           setClients(clients);
           socketRef.current.emit(ACTIONS.SYNC_CODE, {
@@ -55,7 +49,6 @@ export const EditorPage = () => {
 
       //Listening for disconnected
       socketRef.current?.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
-
         toast.success(`${username} left the room. `);
         setClients((prev) => {
           return prev.filter(
@@ -72,6 +65,8 @@ export const EditorPage = () => {
 
     init();
     return () => {
+      socketRef?.current?.emit(ACTIONS.DISCONNECTED,{roomId});
+
       socketRef?.current?.disconnect();
       socketRef?.current?.off(ACTIONS.JOINED);
       socketRef?.current?.off(ACTIONS.DISCONNECTED);
@@ -92,6 +87,7 @@ export const EditorPage = () => {
     }
   }
   function leaveRoom() {
+
     reactNavigator('/');
   }
 

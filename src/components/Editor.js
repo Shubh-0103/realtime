@@ -21,9 +21,7 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
         lineNumbers: true,
       });
       editorRef?.current?.on('change', (instance, changes) => {
-        console.log('changes', changes);
         const { origin } = changes;
-        console.log("val",instance)
         const code = instance.getValue();
         onCodeChange(code);
         if (origin != 'setValue') {
@@ -34,12 +32,10 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
 
             })
         }
-        console.log(code);
       })
       //used for adding data dynamically
 
       socketRef?.current?.on(ACTIONS.CODE_CHANGE, ({ code }) => {
-        console.log("code",code)
         if (code !== null) {
           editorRef.current.setValue(`code`);
         }
