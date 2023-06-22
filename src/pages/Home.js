@@ -65,7 +65,10 @@ export const Home = () => {
                 </div>
             </div>
             <footer>
-                <h4>Built with by <a href="">Shubh</a></h4>
+                <h4>
+                    Built with &nbsp; by &nbsp; 
+                    <a href="">Shubh</a>
+                    </h4>
             </footer>
         </div>
     )

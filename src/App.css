@@ -90,7 +90,9 @@ footer a {
 }
 
 .createNewBtn:hover,
-footer a {
+footer a:hover {
+  display: grid;
+  grid-template-columns: 230px 1fr;
   color: #1c6538;
   border-color: #1c6538;
 }
@@ -98,6 +100,7 @@ footer a {
 .mainWrap {
   display: grid;
   grid-template-columns: 230px 1fr;
+  height : 100vh;
 
 }
 
@@ -146,7 +149,7 @@ footer a {
 }
 
 .CodeMirror {
-  min-height: calc(100vh-20px);
+  min-height: calc(100vh);
   font-size: 20px;
   line-height: 1.6;
   padding-top: 20px;
