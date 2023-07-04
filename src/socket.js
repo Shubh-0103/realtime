@@ -7,7 +7,7 @@ const options = {
     timeout:10000,
     transports : ['websocket'],
 };
-return io('https://realtime-dusky.vercel.app/'); 
+return io("/"); 
 //return sockets instance
 
 };
