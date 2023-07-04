@@ -65,6 +65,11 @@ export const EditorPage = () => {
 
     init();
     return () => {
+      return () => {
+        if (socketRef.current.readyState === 1) { // <-- This is important
+            socketRef.current.close();
+        }
+    }
       socketRef?.current?.emit(ACTIONS.DISCONNECTED,{roomId});
 
       socketRef?.current?.disconnect();

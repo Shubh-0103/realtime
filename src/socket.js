@@ -7,7 +7,7 @@ const options = {
     timeout:10000,
     transports : ['websocket'],
 };
-return io("/",options); 
+return io(process.env.REACT_APP_BACKEND_URL); 
 //return sockets instance
 
 };
