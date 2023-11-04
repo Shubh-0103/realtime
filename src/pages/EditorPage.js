@@ -48,6 +48,7 @@ export const EditorPage = () => {
 
 
       //Listening for disconnected
+      console.log(socketRef.current)
       socketRef.current?.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
         toast.success(`${username} left the room. `);
         setClients((prev) => {
@@ -62,8 +63,8 @@ export const EditorPage = () => {
       }
       )
     };
-
-    init();
+    
+    location?.state?.username!=null? init():reactNavigator("/");
     return () => {
       return () => {
         if (socketRef.current.readyState === 1) { // <-- This is important
@@ -92,7 +93,7 @@ export const EditorPage = () => {
     }
   }
   function leaveRoom() {
-
+    socketRef?.current?.emit(ACTIONS.DISCONNECTED,{roomId});
     reactNavigator('/');
   }
 

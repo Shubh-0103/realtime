@@ -60,7 +60,9 @@ socket?.on(ACTIONS.SYNC_CODE,({socketId,code})=>{
 
     socket?.on('disconnected',({roomId}) =>{
         const clients = getALLConnectedClients(roomId);
+        console.log(userSocketMap[socket.id])
         clients?.forEach( ({socketId}) => {
+            console.log("user socket",socketId)
               io.to(socketId).emit(ACTIONS.DISCONNECTED,{
                socketId : socket.id,
                username:userSocketMap[socket.id],  
